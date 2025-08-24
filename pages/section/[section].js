@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { getAllArticles, getAllSections } from '../../lib/articles'
 import { generatePageMetadata, generateHomePageStructuredData, extractDescription } from '../../lib/seo'
@@ -8,7 +9,7 @@ import Layout from '../../components/Layout'
 
 export default function SectionPage({ 
   sectionName, 
-  articles, 
+  initialArticles, 
   featuredArticle, 
   otherSections, 
   totalArticles,
@@ -16,6 +17,62 @@ export default function SectionPage({
   structuredData 
 }) {
   const sectionDisplayName = sectionName.charAt(0).toUpperCase() + sectionName.slice(1)
+  
+  // Lazy loading states
+  const [articles, setArticles] = useState(initialArticles)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(initialArticles.length < totalArticles - 1) // -1 for featured
+  const [page, setPage] = useState(1)
+  
+  // Infinite scroll functionality
+  const loadMoreArticles = useCallback(async () => {
+    if (loading || !hasMore) return
+    
+    setLoading(true)
+    
+    try {
+      const response = await fetch(`/api/section-articles?section=${encodeURIComponent(sectionName)}&page=${page + 1}&limit=12`)
+      
+      if (response.ok) {
+        const data = await response.json()
+        const newArticles = data.articles || []
+        
+        if (newArticles.length === 0) {
+          setHasMore(false)
+        } else {
+          setArticles(prev => [...prev, ...newArticles])
+          setPage(prev => prev + 1)
+          setHasMore(data.pagination?.hasMore || false)
+        }
+      } else {
+        setHasMore(false)
+      }
+    } catch (error) {
+      console.error('Error loading more articles:', error)
+      setHasMore(false)
+    } finally {
+      setLoading(false)
+    }
+  }, [loading, hasMore, page, sectionName])
+
+  // Scroll event listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (loading || !hasMore) return
+      
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+      
+      // Trigger load more when user is 200px from bottom
+      if (scrollTop + windowHeight >= documentHeight - 200) {
+        loadMoreArticles()
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [loadMoreArticles])
   
   return (
     <>
@@ -105,7 +162,7 @@ export default function SectionPage({
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-            {articles.length > 0 ? (
+            {totalArticles > 0 ? (
               <>
                 {/* Featured Article */}
                 {featuredArticle && (
@@ -163,26 +220,21 @@ export default function SectionPage({
                   </section>
                 )}
 
-                {/* All Articles Grid */}
+                {/* All Articles Grid with Lazy Loading */}
                 <section className="mb-8 sm:mb-12">
                   <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center">
                       <span className="w-1 h-8 bg-gray-900 mr-3"></span>
                       Latest {sectionDisplayName} Articles
+                      <span className="ml-3 text-sm font-normal text-gray-500">
+                        ({articles.length + (featuredArticle ? 1 : 0)} of {totalArticles})
+                      </span>
                     </h2>
-                    
-                    {/* Sort/Filter Options */}
-                    <div className="flex items-center space-x-4">
-                      <select className="text-sm border border-gray-300 rounded-md px-3 py-1 focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                      </select>
-                    </div>
                   </div>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                    {articles.map((article) => (
-                      <article key={article.guardianId} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+                    {articles.map((article, index) => (
+                      <article key={`${article.guardianId}-${index}`} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden animate-fade-in">
                         <Link href={`/article/${article.slug}`}>
                           <div className="cursor-pointer">
                             {/* Article Image */}
@@ -194,6 +246,7 @@ export default function SectionPage({
                                   fill
                                   className="object-cover hover:scale-105 transition-transform duration-300"
                                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                  loading={index > 5 ? "lazy" : "eager"}
                                 />
                               </div>
                             )}
@@ -218,7 +271,7 @@ export default function SectionPage({
                                   {format(new Date(article.webPublicationDate), 'MMM dd, yyyy')}
                                 </time>
                                 <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                  {Math.ceil((article.bodyText?.length || 1000) / 1000)} min read
+                                  {Math.ceil((article.headline?.length || 500) / 200)} min read
                                 </span>
                               </div>
                             </div>
@@ -228,10 +281,40 @@ export default function SectionPage({
                     ))}
                   </div>
                   
-                  {/* Load More / Pagination */}
-                  {articles.length >= 12 && (
-                    <div className="text-center mt-8 sm:mt-12">
-                      <button className="px-8 py-3 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition-colors">
+                  {/* Loading Indicator */}
+                  {loading && (
+                    <div className="flex justify-center items-center py-8">
+                      <div className="flex items-center space-x-3">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+                        <span className="text-gray-600">Loading more articles...</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* End of Articles Indicator */}
+                  {!hasMore && !loading && articles.length > 0 && (
+                    <div className="text-center py-8">
+                      <div className="inline-flex items-center px-6 py-3 bg-gray-100 rounded-lg">
+                        <svg className="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-600 font-medium">
+                          You've viewed all {totalArticles} {sectionDisplayName.toLowerCase()} articles
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Manual Load More Button (fallback) */}
+                  {hasMore && !loading && (
+                    <div className="text-center mt-8">
+                      <button
+                        onClick={loadMoreArticles}
+                        className="px-8 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors flex items-center mx-auto"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
                         Load More Articles
                       </button>
                     </div>
@@ -372,8 +455,8 @@ export async function getStaticProps({ params }) {
       }
     }
     
-    // Limit articles for performance
-    const articles = sectionArticles.slice(0, 20).map(article => ({
+    // Initial load - first 12 articles (excluding featured)
+    const initialArticles = sectionArticles.slice(1, 13).map(article => ({
       guardianId: article.guardianId,
       webTitle: article.webTitle,
       sectionName: article.sectionName,
@@ -381,10 +464,18 @@ export async function getStaticProps({ params }) {
       headline: article.headline,
       thumbnail: article.thumbnail,
       slug: article.slug,
-      bodyText: article.bodyText // For reading time calculation
     }))
     
-    const featuredArticle = articles[0] || null
+    const featuredArticle = sectionArticles[0] ? {
+      guardianId: sectionArticles[0].guardianId,
+      webTitle: sectionArticles[0].webTitle,
+      sectionName: sectionArticles[0].sectionName,
+      webPublicationDate: sectionArticles[0].webPublicationDate,
+      headline: sectionArticles[0].headline,
+      thumbnail: sectionArticles[0].thumbnail,
+      slug: sectionArticles[0].slug,
+    } : null
+    
     const otherSections = allSections.filter(s => s.toLowerCase() !== sectionName).slice(0, 6)
     
     const sectionDisplayName = sectionName.charAt(0).toUpperCase() + sectionName.slice(1)
@@ -396,12 +487,12 @@ export async function getStaticProps({ params }) {
       image: featuredArticle?.thumbnail
     })
     
-    const structuredData = generateHomePageStructuredData(articles.slice(0, 10))
+    const structuredData = generateHomePageStructuredData(initialArticles.slice(0, 10))
     
     return {
       props: {
         sectionName,
-        articles: articles.slice(1), // Exclude featured article from main grid
+        initialArticles,
         featuredArticle,
         otherSections,
         totalArticles: sectionArticles.length,

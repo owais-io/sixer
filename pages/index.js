@@ -291,10 +291,11 @@ export default function HomePage({ articles, featuredArticles, sectionArticles, 
                     {/* Load More */}
                     <div className="text-center mt-6 sm:mt-8">
                       <Link 
-                        href="/archive"
+                        href="/"
                         className="inline-block px-6 py-3 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition-colors"
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                       >
-                        Load More Stories
+                        Back to Top
                       </Link>
                     </div>
                   </div>
