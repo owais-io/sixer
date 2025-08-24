@@ -74,37 +74,37 @@ export default function Layout({ children }) {
                   Home
                 </Link>
                 <Link 
-                  href="/politics"
+                  href="/section/politics"
                   className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1"
                 >
                   Politics
                 </Link>
                 <Link 
-                  href="/world"
+                  href="/section/world"
                   className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1"
                 >
                   World
                 </Link>
                 <Link 
-                  href="/business"
+                  href="/section/business"
                   className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1"
                 >
                   Business
                 </Link>
                 <Link 
-                  href="/sports"
+                  href="/section/sports"
                   className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1"
                 >
                   Sports
                 </Link>
                 <Link 
-                  href="/technology"
+                  href="/section/technology"
                   className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1"
                 >
                   Technology
                 </Link>
                 <Link 
-                  href="/health"
+                  href="/section/health"
                   className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1"
                 >
                   Health
@@ -139,19 +139,19 @@ export default function Layout({ children }) {
                 <Link href="/" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
                   Home
                 </Link>
-                <Link href="/politics" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
+                <Link href="/section/politics" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
                   Politics
                 </Link>
-                <Link href="/world" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
+                <Link href="/section/world" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
                   World
                 </Link>
-                <Link href="/business" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
+                <Link href="/section/business" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
                   Business
                 </Link>
-                <Link href="/sports" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
+                <Link href="/section/sports" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
                   Sports
                 </Link>
-                <Link href="/technology" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
+                <Link href="/section/technology" className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-2">
                   Technology
                 </Link>
               </div>
@@ -172,7 +172,7 @@ export default function Layout({ children }) {
               <Link href="/latest" className="text-gray-600 hover:text-red-600 text-xs sm:text-sm whitespace-nowrap transition-colors">
                 LATEST
               </Link>
-              <Link href="/opinion" className="text-gray-600 hover:text-red-600 text-xs sm:text-sm whitespace-nowrap transition-colors">
+              <Link href="/section/opinion" className="text-gray-600 hover:text-red-600 text-xs sm:text-sm whitespace-nowrap transition-colors">
                 OPINION
               </Link>
               <Link href="/analysis" className="text-gray-600 hover:text-red-600 text-xs sm:text-sm whitespace-nowrap transition-colors">
