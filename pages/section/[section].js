@@ -112,11 +112,11 @@ export default function SectionPage({
       <Layout>
         <div className="bg-white">
           {/* Section Header */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 text-white py-8 sm:py-12">
+          <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white py-8 sm:py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               {/* Breadcrumb */}
               <nav className="mb-6" aria-label="Breadcrumb">
-                <ol className="flex items-center space-x-2 text-sm text-red-100">
+                <ol className="flex items-center space-x-2 text-sm text-purple-100">
                   <li>
                     <Link href="/" className="hover:text-white transition-colors">
                       Home
@@ -138,19 +138,11 @@ export default function SectionPage({
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
                   {sectionDisplayName} News
                 </h1>
-                <p className="text-lg sm:text-xl text-red-100 mb-6 max-w-3xl">
+                <p className="text-lg sm:text-xl text-purple-100 mb-6 max-w-3xl">
                   {getSectionDescription(sectionName)}
                 </p>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <div className="flex items-center text-red-100">
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span className="text-sm">
-                      {totalArticles} {totalArticles === 1 ? 'article' : 'articles'} available
-                    </span>
-                  </div>
-                  <div className="flex items-center text-red-100">
+                  <div className="flex items-center text-purple-100">
                     <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                     </svg>
@@ -169,7 +161,7 @@ export default function SectionPage({
                   <section className="mb-8 sm:mb-12">
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center">
-                        <span className="w-1 h-8 bg-red-600 mr-3"></span>
+                        <span className="w-1 h-8 bg-purple-600 mr-3"></span>
                         Featured Story
                       </h2>
                     </div>
@@ -195,11 +187,11 @@ export default function SectionPage({
                             {/* Content */}
                             <div className="p-6 sm:p-8 flex flex-col justify-center">
                               <div className="mb-4">
-                                <span className="bg-red-600 text-white px-3 py-1 text-sm font-bold uppercase rounded">
+                                <span className="bg-purple-600 text-white px-3 py-1 text-sm font-bold uppercase rounded">
                                   Featured
                                 </span>
                               </div>
-                              <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 hover:text-red-600 transition-colors leading-tight">
+                              <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 hover:text-purple-600 transition-colors leading-tight">
                                 {featuredArticle.webTitle}
                               </h3>
                               {featuredArticle.headline && featuredArticle.headline !== featuredArticle.webTitle && (
@@ -226,9 +218,6 @@ export default function SectionPage({
                     <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center">
                       <span className="w-1 h-8 bg-gray-900 mr-3"></span>
                       Latest {sectionDisplayName} Articles
-                      <span className="ml-3 text-sm font-normal text-gray-500">
-                        ({articles.length + (featuredArticle ? 1 : 0)} of {totalArticles})
-                      </span>
                     </h2>
                   </div>
                   
@@ -254,7 +243,7 @@ export default function SectionPage({
                             {/* Article Content */}
                             <div className="p-4 sm:p-6">
                               {/* Title */}
-                              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 line-clamp-3 hover:text-red-600 transition-colors leading-tight">
+                              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 line-clamp-3 hover:text-purple-600 transition-colors leading-tight">
                                 {article.webTitle}
                               </h3>
                               
@@ -285,7 +274,7 @@ export default function SectionPage({
                   {loading && (
                     <div className="flex justify-center items-center py-8">
                       <div className="flex items-center space-x-3">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
                         <span className="text-gray-600">Loading more articles...</span>
                       </div>
                     </div>
@@ -310,7 +299,7 @@ export default function SectionPage({
                     <div className="text-center mt-8">
                       <button
                         onClick={loadMoreArticles}
-                        className="px-8 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors flex items-center mx-auto"
+                        className="px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors flex items-center mx-auto"
                       >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
@@ -335,12 +324,12 @@ export default function SectionPage({
                           className="group"
                         >
                           <div className="bg-white rounded-lg p-4 text-center hover:shadow-lg transition-shadow">
-                            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-red-600 transition-colors">
+                            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-purple-600 transition-colors">
                               <span className="text-2xl group-hover:text-white transition-colors">
                                 {getSectionIcon(section)}
                               </span>
                             </div>
-                            <h3 className="font-semibold text-gray-900 text-sm capitalize group-hover:text-red-600 transition-colors">
+                            <h3 className="font-semibold text-gray-900 text-sm capitalize group-hover:text-purple-600 transition-colors">
                               {section}
                             </h3>
                           </div>
@@ -367,7 +356,7 @@ export default function SectionPage({
                   </p>
                   <Link 
                     href="/"
-                    className="inline-flex items-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
+                    className="inline-flex items-center px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />

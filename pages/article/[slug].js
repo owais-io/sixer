@@ -18,8 +18,8 @@ export default function ArticlePage({ article, relatedArticles, metadata, struct
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="text-center">
             <div className="mb-8">
-              <div className="mx-auto w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
-                <svg className="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="mx-auto w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                <svg className="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
@@ -29,7 +29,7 @@ export default function ArticlePage({ article, relatedArticles, metadata, struct
               </p>
               <Link 
                 href="/" 
-                className="inline-flex items-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
+                className="inline-flex items-center px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
@@ -129,7 +129,7 @@ export default function ArticlePage({ article, relatedArticles, metadata, struct
                 {/* Category Badge */}
                 <div className="mb-4 sm:mb-6">
                   <Link href={`/section/${article.sectionName.toLowerCase()}`}>
-                    <span className="inline-block px-3 py-1 text-sm font-semibold text-white bg-red-600 rounded-full hover:bg-red-700 transition-colors uppercase">
+                    <span className="inline-block px-3 py-1 text-sm font-semibold text-white bg-purple-600 rounded-full hover:bg-purple-700 transition-colors uppercase">
                       {article.sectionName}
                     </span>
                   </Link>
@@ -297,7 +297,7 @@ export default function ArticlePage({ article, relatedArticles, metadata, struct
                   
                   <Link 
                     href="/"
-                    className="inline-flex items-center text-red-600 hover:text-red-700 font-semibold text-sm transition-colors"
+                    className="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold text-sm transition-colors"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
@@ -336,7 +336,7 @@ export default function ArticlePage({ article, relatedArticles, metadata, struct
                                 {relatedArticle.sectionName}
                               </span>
                             </div>
-                            <h4 className="text-base font-bold text-gray-900 mb-2 line-clamp-2 hover:text-red-600 transition-colors">
+                            <h4 className="text-base font-bold text-gray-900 mb-2 line-clamp-2 hover:text-purple-600 transition-colors">
                               {relatedArticle.webTitle}
                             </h4>
                             <time className="text-xs text-gray-500" dateTime={relatedArticle.webPublicationDate}>

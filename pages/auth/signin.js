@@ -27,8 +27,8 @@ export default function SignIn({ providers }) {
               </p>
               
               {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-700">
+                <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                  <p className="text-sm text-purple-700">
                     {error === 'AccessDenied' 
                       ? 'Access denied. You are not authorized to access the admin panel.'
                       : error === 'Configuration'
@@ -43,7 +43,7 @@ export default function SignIn({ providers }) {
                 <div key={provider.name}>
                   <button
                     onClick={() => signIn(provider.id, { callbackUrl: '/admin' })}
-                    className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors flex items-center justify-center"
+                    className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center"
                   >
                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                       <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

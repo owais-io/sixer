@@ -167,6 +167,47 @@
   .animate-marquee {
     animation: marquee 30s linear infinite;
   }
+
+  /* Touch-friendly interactions */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+
+  /* Swipe gestures */
+  .swipe-container {
+    position: relative;
+    overflow: hidden;
+    touch-action: pan-x;
+  }
+
+  .swipe-item {
+    transition: transform 0.3s ease-out;
+  }
+
+  /* Better tap targets for mobile */
+  @media (max-width: 768px) {
+    a, button, [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Prevent text selection on touch devices */
+    .no-select {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+  }
   
   @keyframes fadeIn {
     from {

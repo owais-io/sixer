@@ -1,36 +1,40 @@
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
+import useTopSections from '../hooks/useTopSections'
+import SearchBox from './SearchBox'
 
 export default function Layout({ children }) {
   const { data: session } = useSession()
-  const [topSections, setTopSections] = useState([])
+  const { topSections, loading: sectionsLoading } = useTopSections()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [currentTime, setCurrentTime] = useState('')
+  const [currentDate, setCurrentDate] = useState('')
 
-  // Fetch top sections on component mount
   useEffect(() => {
-    fetchTopSections()
-  }, [])
-
-  const fetchTopSections = async () => {
-    try {
-      const response = await fetch('/api/top-sections')
-      if (response.ok) {
-        const data = await response.json()
-        setTopSections(data.sections || [])
-      }
-    } catch (error) {
-      console.error('Failed to load top sections:', error)
-      // Fallback to default sections if API fails
-      setTopSections([
-        { name: 'Politics', count: 0 },
-        { name: 'World', count: 0 },
-        { name: 'Business', count: 0 },
-        { name: 'Sports', count: 0 },
-        { name: 'Technology', count: 0 }
-      ])
+    const updateTime = () => {
+      const now = new Date()
+      setCurrentTime(now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZoneName: 'short'
+      }))
+      setCurrentDate(now.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }))
     }
-  }
+
+    // Update immediately
+    updateTime()
+    
+    // Update every minute
+    const interval = setInterval(updateTime, 60000)
+    
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <div className="min-h-screen bg-white">
@@ -40,41 +44,32 @@ export default function Layout({ children }) {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs space-y-1 sm:space-y-0">
             <div className="flex items-center space-x-4">
               <span className="hidden sm:inline">
-                {new Date().toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
+                {currentDate}
               </span>
               <span className="sm:hidden">
-                {new Date().toLocaleDateString('en-US', { 
+                {currentDate ? new Date(currentDate).toLocaleDateString('en-US', { 
                   month: 'short', 
                   day: 'numeric',
                   year: 'numeric'
-                })}
+                }) : ''}
               </span>
             </div>
             <div className="flex items-center space-x-4">
               <span className="hidden md:inline">Updated every 5 minutes</span>
               <span>•</span>
-              <span>{new Date().toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                timeZoneName: 'short'
-              })}</span>
+              <span>{currentTime}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Header */}
-      <header className="bg-white border-b-2 border-red-600 shadow-sm">
+      <header className="bg-white border-b-2 border-purple-600 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Logo and Masthead */}
           <div className="py-4 sm:py-6 text-center border-b border-gray-200">
             <Link href="/" className="inline-block">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-red-600 hover:text-red-700 transition-colors leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-purple-600 hover:text-purple-700 transition-colors leading-tight">
                 parho.net
               </h1>
               <p className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2 uppercase tracking-wide font-medium">
@@ -88,10 +83,13 @@ export default function Layout({ children }) {
             <div className="flex items-center justify-between">
               {/* Mobile Menu Button */}
               <button 
-                className="sm:hidden p-2 text-gray-600 hover:text-red-600"
+                className="sm:hidden p-2 text-gray-600 hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-md"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   {mobileMenuOpen ? (
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   ) : (
@@ -104,7 +102,7 @@ export default function Layout({ children }) {
               <div className="hidden sm:flex items-center space-x-4 lg:space-x-6 flex-1">
                 <Link 
                   href="/"
-                  className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1"
+                  className="text-gray-800 hover:text-purple-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-purple-600 py-1"
                 >
                   Home
                 </Link>
@@ -112,19 +110,14 @@ export default function Layout({ children }) {
                   <Link 
                     key={section.name}
                     href={`/section/${section.name.toLowerCase()}`}
-                    className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1 flex items-center"
+                    className="text-gray-800 hover:text-purple-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-purple-600 py-1 flex items-center"
                   >
                     {section.name}
-                    {section.count > 0 && (
-                      <span className="ml-1 text-xs bg-red-100 text-red-600 rounded-full px-2 py-0.5 normal-case">
-                        {section.count}
-                      </span>
-                    )}
                   </Link>
                 ))}
                 {topSections.length > 6 && (
                   <div className="relative group">
-                    <button className="text-gray-800 hover:text-red-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-red-600 py-1 flex items-center">
+                    <button className="text-gray-800 hover:text-purple-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-purple-600 py-1 flex items-center">
                       More
                       <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -135,12 +128,9 @@ export default function Layout({ children }) {
                         <Link
                           key={section.name}
                           href={`/section/${section.name.toLowerCase()}`}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-600 transition-colors"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-600 transition-colors"
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="capitalize">{section.name}</span>
-                            <span className="text-xs text-gray-500">{section.count}</span>
-                          </div>
+                          <span className="capitalize">{section.name}</span>
                         </Link>
                       ))}
                     </div>
@@ -148,16 +138,16 @@ export default function Layout({ children }) {
                 )}
               </div>
               
-              {/* Time Display - Mobile/Desktop */}
-              <div className="flex items-center text-xs text-gray-500">
-                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="hidden sm:inline">Updated: </span>
-                <span>{new Date().toLocaleTimeString('en-US', { 
-                  hour: '2-digit', 
-                  minute: '2-digit'
-                })}</span>
+              {/* Search and Time Display */}
+              <div className="flex items-center space-x-3">
+                <SearchBox />
+                <div className="flex items-center text-xs text-gray-500">
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="hidden sm:inline">Updated: </span>
+                  <span>{currentTime ? currentTime.replace(/\s.*$/, '') : ''}</span>
+                </div>
               </div>
 
               {/* Admin Access (Hidden) */}
@@ -174,15 +164,16 @@ export default function Layout({ children }) {
 
             {/* Mobile Navigation Menu */}
             {mobileMenuOpen && (
-              <div className="sm:hidden mt-4 pt-4 border-t border-gray-200 animate-fade-in">
+              <div id="mobile-menu" className="sm:hidden mt-4 pt-4 border-t border-gray-200 animate-fade-in" role="menu">
                 <div className="grid grid-cols-1 gap-1">
                   <Link 
                     href="/" 
-                    className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"
+                    className="text-gray-800 hover:text-purple-600 font-semibold text-sm uppercase py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between focus:outline-none focus:bg-gray-50"
                     onClick={() => setMobileMenuOpen(false)}
+                    role="menuitem"
                   >
                     <span>Home</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
@@ -190,18 +181,14 @@ export default function Layout({ children }) {
                     <Link 
                       key={section.name}
                       href={`/section/${section.name.toLowerCase()}`} 
-                      className="text-gray-800 hover:text-red-600 font-semibold text-sm uppercase py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"
+                      className="text-gray-800 hover:text-purple-600 font-semibold text-sm uppercase py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between focus:outline-none focus:bg-gray-50"
                       onClick={() => setMobileMenuOpen(false)}
+                      role="menuitem"
                     >
                       <span>{section.name}</span>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-xs bg-gray-100 text-gray-600 rounded-full px-2 py-1 normal-case">
-                          {section.count}
-                        </span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </Link>
                   ))}
                 </div>
@@ -209,10 +196,7 @@ export default function Layout({ children }) {
                 {/* Mobile Menu Footer */}
                 <div className="mt-4 pt-4 border-t border-gray-200 text-center">
                   <p className="text-xs text-gray-500">
-                    Last updated: {new Date().toLocaleTimeString('en-US', { 
-                      hour: '2-digit', 
-                      minute: '2-digit'
-                    })}
+                    Last updated: {currentTime ? currentTime.replace(/\s.*$/, '') : ''}
                   </p>
                 </div>
               </div>
@@ -232,7 +216,7 @@ export default function Layout({ children }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {/* About */}
             <div className="lg:col-span-2">
-              <Link href="/" className="text-2xl sm:text-3xl font-bold text-red-500 mb-4 inline-block">
+              <Link href="/" className="text-2xl sm:text-3xl font-bold text-purple-500 mb-4 inline-block">
                 parho.net
               </Link>
               <p className="text-gray-300 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
@@ -263,14 +247,13 @@ export default function Layout({ children }) {
               <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 uppercase">Top Sections</h3>
               <ul className="space-y-1 sm:space-y-2 text-sm">
                 {topSections.slice(0, 8).map((section) => (
-                  <li key={`footer-${section.name}`} className="flex items-center justify-between">
+                  <li key={`footer-${section.name}`}>
                     <Link 
                       href={`/section/${section.name.toLowerCase()}`} 
                       className="text-gray-300 hover:text-white transition-colors capitalize"
                     >
                       {section.name}
                     </Link>
-                    <span className="text-xs text-gray-500">({section.count})</span>
                   </li>
                 ))}
               </ul>
@@ -301,7 +284,7 @@ export default function Layout({ children }) {
                   href="https://www.theguardian.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-red-400 hover:text-red-300 transition-colors"
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
                 >
                   The Guardian
                 </a>
@@ -313,67 +296,3 @@ export default function Layout({ children }) {
     </div>
   )
 }
-//                 </a>
-//                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-//                   <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-//                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-//                   </svg>
-//                 </a>
-//                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-//                   <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-//                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z"/>
-//                   </svg>
-//                 </a>
-//               </div>
-//             </div>
-            
-//             {/* Sections */}
-//             <div>
-//               <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 uppercase">Sections</h3>
-//               <ul className="space-y-1 sm:space-y-2 text-sm">
-//                 <li><Link href="/politics" className="text-gray-300 hover:text-white transition-colors">Politics</Link></li>
-//                 <li><Link href="/world" className="text-gray-300 hover:text-white transition-colors">World News</Link></li>
-//                 <li><Link href="/business" className="text-gray-300 hover:text-white transition-colors">Business</Link></li>
-//                 <li><Link href="/sports" className="text-gray-300 hover:text-white transition-colors">Sports</Link></li>
-//                 <li><Link href="/technology" className="text-gray-300 hover:text-white transition-colors">Technology</Link></li>
-//                 <li><Link href="/health" className="text-gray-300 hover:text-white transition-colors">Health</Link></li>
-//               </ul>
-//             </div>
-            
-//             {/* Information */}
-//             <div>
-//               <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 uppercase">Information</h3>
-//               <ul className="space-y-1 sm:space-y-2 text-sm">
-//                 <li><Link href="/about" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
-//                 <li><Link href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
-//                 <li><Link href="/privacy" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</Link></li>
-//                 <li><Link href="/terms" className="text-gray-300 hover:text-white transition-colors">Terms of Service</Link></li>
-//                 <li><Link href="/sitemap.xml" className="text-gray-300 hover:text-white transition-colors">Sitemap</Link></li>
-//               </ul>
-//             </div>
-//           </div>
-          
-//           {/* Bottom Footer */}
-//           <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-700">
-//             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-//               <div className="text-xs sm:text-sm text-gray-400">
-//                 © {new Date().getFullYear()} Parho.net. All rights reserved. 
-//               </div>
-//               <div className="text-xs sm:text-sm text-gray-400">
-//                 Content sourced from{' '}
-//                 <a 
-//                   href="https://www.theguardian.com"
-//                   target="_blank"
-//                   rel="noopener noreferrer"
-//                   className="text-red-400 hover:text-red-300 transition-colors"
-//                 >
-//                   The Guardian
-//                 </a>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </footer>
-//     </div>
-//   )
-// }
