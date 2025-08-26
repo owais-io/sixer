@@ -284,8 +284,28 @@ export async function getStaticProps() {
       slug: article.slug,
     }))
 
-    // Get featured articles (top 4)
-    const featuredArticles = articles.slice(0, 4)
+    // Priority sections for featured article selection
+    const prioritySections = ['US news', 'World news', 'UK news', 'Business', 'Politics', 'Australia news']
+    
+    // Get featured articles - first article from priority sections, then fill with others
+    let featuredArticles = []
+    
+    // Find the latest article from priority sections
+    const priorityArticle = articles.find(article => 
+      prioritySections.includes(article.sectionName)
+    )
+    
+    if (priorityArticle) {
+      featuredArticles.push(priorityArticle)
+      // Add remaining articles excluding the selected priority article
+      const remainingArticles = articles.filter(article => 
+        article.guardianId !== priorityArticle.guardianId
+      )
+      featuredArticles = featuredArticles.concat(remainingArticles.slice(0, 3))
+    } else {
+      // Fallback to top 4 if no priority articles found
+      featuredArticles = articles.slice(0, 4)
+    }
 
     // Get breaking news (top 5 recent articles)
     const breakingNews = articles.length > 0 ? articles.slice(0, 5) : []
