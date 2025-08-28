@@ -106,6 +106,12 @@ export default function Layout({ children }) {
                 >
                   Home
                 </Link>
+                <Link 
+                  href="/categories"
+                  className="text-gray-800 hover:text-purple-600 font-semibold text-sm lg:text-base uppercase tracking-wide transition-colors border-b-2 border-transparent hover:border-purple-600 py-1"
+                >
+                  Categories
+                </Link>
                 {topSections.slice(0, 6).map((section) => (
                   <Link 
                     key={section.name}
@@ -173,6 +179,17 @@ export default function Layout({ children }) {
                     role="menuitem"
                   >
                     <span>Home</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link 
+                    href="/categories" 
+                    className="text-gray-800 hover:text-purple-600 font-semibold text-sm uppercase py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between focus:outline-none focus:bg-gray-50"
+                    onClick={() => setMobileMenuOpen(false)}
+                    role="menuitem"
+                  >
+                    <span>Categories</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -263,6 +280,7 @@ export default function Layout({ children }) {
             <div>
               <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 uppercase">Information</h3>
               <ul className="space-y-1 sm:space-y-2 text-sm">
+                <li><Link href="/categories" className="text-gray-300 hover:text-white transition-colors">All Categories</Link></li>
                 <li><Link href="/about" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
                 <li><Link href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
                 <li><Link href="/privacy" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</Link></li>
