@@ -32,3 +32,37 @@ pnpm-debug.log*
 
 # typescript
 *.tsbuildinfo
+next-env.d.ts
+
+# Claude Code settings
+.claude/
+
+# OS generated files
+.DS_Store?
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+.coverage
+
+# nyc test coverage
+.nyc_output
+
+# ESLint cache
+.eslintcache

@@ -1,5 +1,6 @@
 import { SessionProvider } from 'next-auth/react'
 import { Inter } from 'next/font/google'
+import { Analytics } from "@vercel/analytics/next"
 import '../styles/globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -12,6 +13,7 @@ export default function App({
     <SessionProvider session={session}>
       <div className={inter.className}>
         <Component {...pageProps} />
+        <Analytics />
       </div>
     </SessionProvider>
   )
